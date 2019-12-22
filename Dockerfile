@@ -1,7 +1,16 @@
 FROM alpine
 
+RUN \
+    apk add \
+    desktop-file-utils \
+    adwaita-icon-theme \
+    ttf-dejavu \
+    ffmpeg-libs \
+    # The following package is used to send key presses to the X process.
+    xdotool
+
 RUN apk update \
-    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing firefox-esr \
+    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing firefox \
     && apk add openjdk8-jre
 
 RUN apk add icedtea-web-mozilla
