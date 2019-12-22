@@ -45,12 +45,18 @@ RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
 
 WORKDIR /tmp/ePass2003-Linux-x64/x86_64/redist/NSS_Firefox_register
 
-#RUN chmod 755 nssFirefox && sh register_Firefox.sh A libcastle_v2.so.1.0.0
+RUN echo "date >>/tmp/gst/stderr.log && date >>/tmp/gst/stdout.log" >> /home/firefox/startup.sh \
+    echo "java -jar /tmp/emSigner/emsigner_WS_OMM.jar 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
+    && echo "firefox" >>  /home/firefox/startup.sh \
+    && chmod 755 /home/firefox/startup.sh \
+    && chown firefox /home/firefox/startup.sh
+
+
+#RUN chmod 755 nssFirefox && sh register_Firefox.sh A ../libcastle_v2.so.1.0.0
 #
 USER firefox
 ENV HOME /home/firefox
 ENV DISPLAY :0
-ENV LANG en_IN
-ENV LANGUAGE en_IN:en
+WORKDIR /home/firefox
 
-#ENTRYPOINT ['firefox']
+CMD ./startup.sh
