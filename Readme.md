@@ -1,8 +1,10 @@
 This docker project is work in progress and IS ONLY MEANT TO DEMONSTRATE the linux setup for emsigner and related components for GST filing.
 
+==== DISCLAIMER ====
+
 PLEASE ENSURE THAT YOU UNDERSTAND THE `Dockerfile`, AS DOING SOMETHING AS SERIOUS AS FILING A RETURN ON A CONTAINERIZED FIREFOX INSTANCE IS RISKY UNLESS YOU KNOW EXACTLY WHAT WENT INTO THE CONTAINER IMAGE!
-USE THE `Dockerfile` to perform a one time installation and configuration on your Linux machine to be able to easily perform GST filing
-PLEASE DO NOT USE THE CONTAINER AS-IS.
+USE THE `Dockerfile` TO PERFORM A ONE TIME INSTALLATION AND CONFIGURATION ON YOUR LINUX MACHINE TO BE ABLE TO EASILY PERFORM GST FILING
+PLEASE DO NOT USE THE CONTAINER AS-IS.  YOU WILL BE EXPOSING YOUR GST CREDENTIALS AND USB TOKEN WITH DSC TO THE CONTAINER.
 
 This container is being specifically built to make it easier to file GST in India with the following fully configured...
  Digital Signature Certificate signinng with emSigner Java Applet.
