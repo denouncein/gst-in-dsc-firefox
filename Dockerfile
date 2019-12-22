@@ -46,7 +46,7 @@ RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
 WORKDIR /tmp/ePass2003-Linux-x64/x86_64/redist/NSS_Firefox_register
 
 RUN echo "date >>/tmp/gst/stderr.log && date >>/tmp/gst/stdout.log" >> /home/firefox/startup.sh \
-    echo "java -jar /tmp/emSigner/emsigner_WS_OMM.jar 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
+    && echo "java -jar /tmp/emSigner/emsigner_WS_OMM.jar 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
     && echo "firefox" >>  /home/firefox/startup.sh \
     && chmod 755 /home/firefox/startup.sh \
     && chown firefox /home/firefox/startup.sh
