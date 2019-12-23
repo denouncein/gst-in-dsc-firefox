@@ -1,30 +1,5 @@
 FROM alpine
 
-RUN \
-    apk add \
-    desktop-file-utils \
-    adwaita-icon-theme \
-    ttf-dejavu \
-    ffmpeg-libs \
-    # The following package is used to send key presses to the X process.
-    xdotool
-
-RUN apk update \
-    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing firefox \
-    && apk add openjdk8-jre
-
-RUN apk add icedtea-web-mozilla
-
-RUN export uid=1000 gid=1000 \
- && mkdir -p /home/firefox \
- && echo "firefox:x:${uid}:${gid}:firefox,,,:/home/firefox:/bin/bash" >> /etc/passwd \
- && echo "firefox:x:${uid}:" >> /etc/group \
- && echo "firefox ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
- && chown ${uid}:${gid} -R /home/firefox \
- && rm -rf /var/lib/apt/lists/*
-
-#RUN locale-gen $LANG
-
 #RUN wget -o /tmp/ProxKey_Linux.zip https://www.e-mudhra.com/repository/downloads/ProxKey_Linux.zip
 RUN wget -O /tmp/ePass2003_Linux.zip https://www.e-mudhra.com/repository/downloads/ePass2003_Linux.zip
 RUN wget -O /tmp/emsigner-v2.6.zip https://tutorial.gst.gov.in/installers/dscemSigner/emsigner-v2.6.zip
@@ -32,28 +7,49 @@ RUN wget -O /tmp/emsigner-v2.6.zip https://tutorial.gst.gov.in/installers/dscemS
 WORKDIR /tmp
 
 RUN chmod 777 -R /tmp \
-    && unzip ePass2003_Linux.zip \
-    && unzip emsigner-v2.6.zip \
-    && rm /tmp/ePass2003_Linux.zip /tmp/emsigner-v2.6.zip
+    && unzip ePass2003_Linux.zip && rm /tmp/ePass2003_Linux.zip \
+    && unzip emsigner-v2.6.zip   && rm /tmp/emsigner-v2.6.zip
 
 RUN chmod 777 -R /tmp \
-    && rm ./ePass2003-Linux/ePass2003-Linux-i386.zip \
     && unzip ./ePass2003-Linux/ePass2003-Linux-x64.zip \
     && rm -rf ./ePass2003-Linux
 
 RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
 
-WORKDIR /tmp/ePass2003-Linux-x64/x86_64/redist/NSS_Firefox_register
+RUN apk update
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing firefox-esr
+RUN apk add openjdk8-jre icedtea-web-mozilla \
+    adwaita-icon-theme ttf-dejavu ffmpeg-libs \
+    desktop-file-utils
+RUN apk add sudo nss-tools curl openssl
+
+RUN export uid=1000 gid=1000 \
+ && echo "firefox:x:${uid}:${gid}:firefox,,,:/home/firefox:/bin/bash" >> /etc/passwd \
+ && echo "firefox:x:${uid}:" >> /etc/group \
+ && echo "firefox ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+ && mkdir -p /home/firefox \
+ && mkdir -p /usr/lib/mozilla/certificates \
+ && chown -R :firefox /usr/lib/mozilla/certificates \
+ && chmod -R 777 /usr/lib/mozilla/certificates \
+ && chown ${uid}:${gid} -R /home/firefox \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY import.sh /home/firefox/
 
 RUN echo "date >>/tmp/gst/stderr.log && date >>/tmp/gst/stdout.log" >> /home/firefox/startup.sh \
     && echo "java -jar /tmp/emSigner/emsigner_WS_OMM.jar 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
-    && echo "firefox" >>  /home/firefox/startup.sh \
+    && echo "sleep 15" >> /home/firefox/startup.sh \
+    && echo "openssl s_client -showcerts -connect 127.0.0.1:1585 </dev/null 2>/dev/null|openssl x509 -outform PEM >emsigner.pem" >> /home/firefox/startup.sh \
+    && echo "echo changeit >passwd.txt" >> /home/firefox/startup.sh \
+    && echo "certutil -N -d /usr/lib/mozilla/certificates -f passwd.txt"  >> /home/firefox/startup.sh \
+    && echo "certutil -A -n "emsigner" -t "TCu,Cuw,Tuw" -i emsigner.pem -d /usr/lib/mozilla/certificates -f passwd.txt" >> /home/firefox/startup.sh \
+    && echo "firefox &" >>  /home/firefox/startup.sh \
+    && echo "sleep 15" >> /home/firefox/startup.sh \
+    && echo "source import.sh" >>  /home/firefox/startup.sh \
+    && echo "ls -l" >>  /home/firefox/startup.sh \
     && chmod 755 /home/firefox/startup.sh \
     && chown firefox /home/firefox/startup.sh
 
-
-#RUN chmod 755 nssFirefox && sh register_Firefox.sh A ../libcastle_v2.so.1.0.0
-#
 USER firefox
 ENV HOME /home/firefox
 ENV DISPLAY :0
