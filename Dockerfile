@@ -9,22 +9,46 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/te
 RUN apk add openjdk8-jre icedtea-web-mozilla \
     adwaita-icon-theme ttf-dejavu ffmpeg-libs \
     desktop-file-utils
-RUN apk add sudo nss-tools curl openssl unrar dpkg pcsc-lite opensc ccid
-
-RUN wget -O /tmp/ProxKey_Linux.zip https://www.e-mudhra.com/repository/downloads/ProxKey_Linux.zip
-RUN wget -O /tmp/ePass2003_Linux.zip https://www.e-mudhra.com/repository/downloads/ePass2003_Linux.zip
-RUN wget -O /tmp/emsigner-v2.6.zip https://tutorial.gst.gov.in/installers/dscemSigner/emsigner-v2.6.zip
+RUN apk add sudo nss-tools curl openssl unrar dpkg pcsc-lite opensc ccid libc6-compat
 
 WORKDIR /tmp
 
-RUN chmod 777 -R /tmp \
-    && unzip ePass2003_Linux.zip && rm ePass2003_Linux.zip \
+RUN wget -O eMudhra_watchdata_linux.zip http://e-mudhra.com/Repository/downloads/eMudhra_watchdata_linux.zip
+RUN wget -O ProxKey_Linux.zip https://www.e-mudhra.com/repository/downloads/ProxKey_Linux.zip
+RUN wget -O ePass2003_Linux.zip https://www.e-mudhra.com/repository/downloads/ePass2003_Linux.zip
+RUN wget -O emsigner-v2.6.zip https://tutorial.gst.gov.in/installers/dscemSigner/emsigner-v2.6.zip
+
+RUN chmod 777 -R /tmp
+
+RUN unzip ePass2003_Linux.zip && rm ePass2003_Linux.zip \
+    && unzip eMudhra_watchdata_linux.zip && rm eMudhra_watchdata_linux.zip \
+    && mv /tmp/eMudhra_watchdata_linux/wdtokentool-emudhra_3.4.3-1_all.deb /tmp && rm -rf /tmp/eMudhra_watchdata_linux \
     && unzip emsigner-v2.6.zip   && rm emsigner-v2.6.zip \
     && unrar e ProxKey_Linux.zip && rm ProxKey_Linux.zip Redhat.zip \
     && unzip ePass2003-Linux/ePass2003-Linux-x64.zip && rm -rf ./ePass2003-Linux \
-    && unzip Ubantu.zip && rm Ubantu.zip
+    && unzip Ubantu.zip && rm Ubantu.zip \
+    && mkdir wdtokentool-proxkey_1.1.1-2_all && mkdir wdtokentool-emudhra_3.4.3-1_all \
+    && dpkg-deb -R wdtokentool-proxkey_1.1.1-2_all.deb wdtokentool-proxkey_1.1.1-2_all \
+    && dpkg-deb -R wdtokentool-emudhra_3.4.3-1_all.deb wdtokentool-emudhra_3.4.3-1_all \
+    && rm wdtokentool-proxkey_1.1.1-2_all.deb wdtokentool-emudhra_3.4.3-1_all.deb
 
-RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
+WORKDIR /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3
+
+RUN tar jxf install.tar.bz2 && rm install.tar.bz2
+
+WORKDIR /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey
+
+RUN tar jxf install.tar.bz2 && rm install.tar.bz2
+
+RUN rm -rf /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey/install/pcsc/32bit \
+    && rm -rf /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey/install/lib/32bit \
+    && rm -rf /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey/install/bin/32bit \
+    && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/pcsc/32bit \
+    && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/lib/32bit \
+    && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/bin/32bit
+
+
+#RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
 
 # openrc
 
@@ -41,8 +65,8 @@ RUN export uid=1000 gid=1000 \
  && chown ${uid}:${gid} -R /home/firefox \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/sbin
-RUN ln -s /home/firefox/update-rc.d && chmod 755 /home/firefox/update-rc.d && cd
+#WORKDIR /usr/sbin
+#RUN ln -s /home/firefox/update-rc.d && chmod 755 /home/firefox/update-rc.d && cd
 
 
 RUN echo "date >>/tmp/gst/stderr.log && date >>/tmp/gst/stdout.log" >> /home/firefox/startup.sh \
