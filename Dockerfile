@@ -36,21 +36,13 @@ RUN export uid=1000 gid=1000 \
  && rm -rf /var/lib/apt/lists/*
 
 RUN echo "date >>/tmp/gst/stderr.log && date >>/tmp/gst/stdout.log" >> /home/firefox/startup.sh \
-    && echo "su -c 'java -jar /usr/lib/emSigner/emsigner_WS_OMM.jar' firefox 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
-    && echo "sleep 5" >> /home/firefox/startup.sh \
-    && echo "openssl s_client -showcerts -connect 127.0.0.1:1585 </dev/null 2>/dev/null|openssl x509 -outform PEM >emsigner.pem" >> /home/firefox/startup.sh \
-    && echo "echo changeit >passwd.txt" >> /home/firefox/startup.sh \
-    && echo "certutil -N -d /usr/lib/mozilla/certificates -f passwd.txt"  >> /home/firefox/startup.sh \
-    && echo "certutil -A -n "emsigner" -t "TCu,Cuw,Tuw" -i emsigner.pem -d /usr/lib/mozilla/certificates -f passwd.txt" >> /home/firefox/startup.sh \
-    && echo "su -c 'firefox' firefox" >>  /home/firefox/startup.sh \
-    && echo "sleep 5" >> /home/firefox/startup.sh \
-    && echo "source import.sh" >>  /home/firefox/startup.sh \
-    && echo "ls -l" >>  /home/firefox/startup.sh \
     && echo "pcscd" >>  /home/firefox/startup.sh \
     && echo "pcscd --hotplug" >>  /home/firefox/startup.sh \
     && echo "pkcs11-tool --module /usr/lib/ePass2003-Linux-x64/libcastle_v2.so.1.0.0  -L " >>  /home/firefox/startup.sh \
-    && echo "su -c 'firefox' firefox" >>  /home/firefox/startup.sh \
-    && echo "firefox" >>  /home/firefox/startup.sh \
+    && echo "sleep 5 && su -c 'java -jar /usr/lib/emSigner/emsigner_WS_OMM.jar' firefox 2>>/tmp/gst/stderr.log 1>>/tmp/gst/stdout.log &" >> /home/firefox/startup.sh \
+    && echo "sleep 5 && su -c 'firefox' firefox" >> /home/firefox/startup.sh \
+    && echo "sleep 5 && source import.sh" >> /home/firefox/startup.sh \
+    && echo "sleep 5 && su -c 'firefox' firefox" >>  /home/firefox/startup.sh \
     && chmod 755 /home/firefox/startup.sh \
     && chown firefox /home/firefox/startup.sh
 

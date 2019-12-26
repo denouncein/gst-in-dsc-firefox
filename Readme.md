@@ -23,4 +23,5 @@ to run the image, create a temp directory called /tmp/gst and invoke the below c
 
 This should pop up a firefox browser with emsigner running in the container and exposed to host image on the same port so that the applet is visible on the host machine's system tray
 
-I still have some way to go. please note that i still am not wiring up the usb key and port to the run command.  this is no where close to working
+Current Status:
+2019/12/26 - emsigner up and running. ePass2003Auto recognized and listing DSC
