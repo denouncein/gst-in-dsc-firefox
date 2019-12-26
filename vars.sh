@@ -1,0 +1,1 @@
+echo vars.sh was called

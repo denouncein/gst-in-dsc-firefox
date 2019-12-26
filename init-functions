@@ -1,0 +1,7 @@
+log_end_msg() {
+        echo  "log_end_msg $*"
+}
+
+log_daemon_msg() {
+        echo  "log_daemon_msg $*"
+}

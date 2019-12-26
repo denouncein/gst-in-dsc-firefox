@@ -9,7 +9,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/te
 RUN apk add openjdk8-jre icedtea-web-mozilla \
     adwaita-icon-theme ttf-dejavu ffmpeg-libs \
     desktop-file-utils
-RUN apk add sudo nss-tools curl openssl unrar dpkg pcsc-lite opensc ccid libc6-compat
+RUN apk add sudo nss-tools curl openssl unrar dpkg pcsc-lite opensc ccid libc6-compat openrc grep
 
 WORKDIR /tmp
 
@@ -45,14 +45,23 @@ RUN rm -rf /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey/instal
     && rm -rf /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey/install/bin/32bit \
     && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/pcsc/32bit \
     && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/lib/32bit \
-    && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/bin/32bit
-
+    && rm -rf /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3/install/bin/32bit \
+    && mkdir /usr/lib/WatchData \
+    && mv /tmp/wdtokentool-proxkey_1.1.1-2_all/usr/lib/WatchData/ProxKey /usr/lib/WatchData/ \
+    && mv /tmp/wdtokentool-emudhra_3.4.3-1_all/usr/lib/WatchData/eMudhra_3.4.3 /usr/lib/WatchData/
 
 #RUN sh /tmp/ePass2003-Linux-x64/x86_64/config/config.sh
+WORKDIR /usr/lib/WatchData
 
-# openrc
-
-#RUN dpkg -i wdtokentool-proxkey_1.1.1-2_all.deb
+COPY emudhra_install.sh /usr/lib/WatchData/eMudhra_3.4.3/install/install_custom
+COPY proxkey_install.sh /usr/lib/WatchData/ProxKey/install/install_custom
+RUN mkdir /lib/init /lib/lsb
+COPY vars.sh /lib/init/
+COPY init-functions /lib/lsb/
+RUN chmod 777 /usr/lib/WatchData/eMudhra_3.4.3/install/install_custom \
+    /usr/lib/WatchData/ProxKey/install/install_custom \
+    /lib/init/vars.sh \
+    /lib/lsb/init-functions
 
 RUN export uid=1000 gid=1000 \
  && echo "firefox:x:${uid}:${gid}:firefox,,,:/home/firefox:/bin/bash" >> /etc/passwd \
