@@ -9,7 +9,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/te
 RUN apk add openjdk8-jre icedtea-web-mozilla \
     adwaita-icon-theme ttf-dejavu ffmpeg-libs \
     desktop-file-utils
-RUN apk add sudo nss-tools curl openssl unrar dpkg pcsc-lite opensc ccid libc6-compat openrc grep
+RUN apk add sudo nss-tools curl openssl unrar dpkg openrc grep
 
 WORKDIR /tmp
 
@@ -58,10 +58,14 @@ COPY proxkey_install.sh /usr/lib/WatchData/ProxKey/install/install_custom
 RUN mkdir /lib/init /lib/lsb
 COPY vars.sh /lib/init/
 COPY init-functions /lib/lsb/
-RUN chmod 777 /usr/lib/WatchData/eMudhra_3.4.3/install/install_custom \
+RUN chmod 777 \
+    /usr/lib/WatchData/eMudhra_3.4.3/install/install_custom \
     /usr/lib/WatchData/ProxKey/install/install_custom \
     /lib/init/vars.sh \
     /lib/lsb/init-functions
+
+RUN /usr/lib/WatchData/eMudhra_3.4.3/install/install_custom
+RUN apk add pcsc-lite pcsc-lite-libs pcsc-lite-dev opensc ccid libc6-compat
 
 RUN export uid=1000 gid=1000 \
  && echo "firefox:x:${uid}:${gid}:firefox,,,:/home/firefox:/bin/bash" >> /etc/passwd \

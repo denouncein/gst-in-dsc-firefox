@@ -89,8 +89,8 @@ CopyFile () {
 	chmod -R a+x $DDIR_TOOLS
 
 
-	ln -sf $DDIR_PCSC/$DAEMON_NAME /usr/sbin/$DAEMON_NAME
-	ln -sf $DDIR_PCSC/$DAEMON_NAME /sbin/$DAEMON_NAME
+#	ln -sf $DDIR_PCSC/$DAEMON_NAME /usr/sbin/$DAEMON_NAME
+#	ln -sf $DDIR_PCSC/$DAEMON_NAME /sbin/$DAEMON_NAME
 	ln -sf $DDIR_PCSC/$PCSCLITE_LIB_NAME.so.1.0.0 $DDIR_PCSC/$PCSCLITE_LIB_NAME.so.1
 
 

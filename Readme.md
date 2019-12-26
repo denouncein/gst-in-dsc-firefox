@@ -19,7 +19,7 @@ To build an image. (you can use any tag of your choice after -t, denouncein/* is
 
 to run the image, create a temp directory called /tmp/gst and invoke the below command.  the emsigner stderr and stdout logs will be written to /tmp/gst so that they can be accessed from the host machine
 
-`docker run --net=host -v /tmp/gst:/tmp/gst --device=/dev/sr1 denouncein/gst-in-dsc-firefox`
+`docker run --net=host -v /tmp/gst:/tmp/gst --privileged denouncein/gst-in-dsc-firefox`
 
 This should pop up a firefox browser with emsigner running in the container and exposed to host image on the same port so that the applet is visible on the host machine's system tray
 

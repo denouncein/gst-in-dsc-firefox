@@ -66,8 +66,8 @@ CopyFile () {
 	cp -fpR $PackPath/tools/* $DDIR_TOOLS
 	chmod -R a+x $DDIR_TOOLS
 
-	ln -sf $DDIR_PCSC/$DAEMON_NAME /usr/sbin/$DAEMON_NAME
-	ln -sf $DDIR_PCSC/$DAEMON_NAME /sbin/$DAEMON_NAME
+#	ln -sf $DDIR_PCSC/$DAEMON_NAME /usr/sbin/$DAEMON_NAME
+#	ln -sf $DDIR_PCSC/$DAEMON_NAME /sbin/$DAEMON_NAME
 	ln -sf $DDIR_PCSC/$PCSCLITE_LIB_NAME.so.1.0.0 $DDIR_PCSC/$PCSCLITE_LIB_NAME.so.1
 
 	ln -sf $DDIR_LIB/libpkcs11wrapper.so $DDIR_TOOLS/libpkcs11wrapper.so

@@ -1,0 +1,12 @@
+apt-get update
+apt-get -y install wget unzip bzip2 libusb-1.0.0 procps libnss3-dev opensc gnupg software-properites-common
+
+wget https://www.e-mudhra.com/repository/downloads/ProxKey_Linux.zip
+unzip ProxKey_Linux.zip
+dpkg -i wdtokentool-proxkey_1.1.1-2_all.deb
+
+wget http://e-mudhra.com/Repository/downloads/eMudhra_watchdata_linux.zip
+unzip eMudhra_watchdata_linux.zip
+dpkg -i eMudhra_watchdata_linux/wdtokentool-emudhra_3.4.3-1_all.deb
+
+pkcs11-tool --module /usr/lib/WatchData/eMudhra_3.4.3/lib/libwdpkcs_eMudhra_343.so -L
